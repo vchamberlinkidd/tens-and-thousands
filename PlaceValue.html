@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Place Value Shifter</title>
+    <style>
+        :root {
+            --primary: #4a90e2;
+            --secondary: #f39c12;
+            --bg: #f4f7f6;
+            --card: #ffffff;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: var(--card);
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 500px;
+        }
+
+        h2 { text-align: center; color: #333; }
+
+        .input-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label { display: block; margin-bottom: 5px; font-weight: bold; color: #666; }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 1.2rem;
+            box-sizing: border-box;
+            transition: border-color 0.3s;
+        }
+
+        input:focus { border-color: var(--primary); outline: none; }
+
+        .result-display {
+            background: #eef2f3;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            border: 2px dashed #cbd5e0;
+            word-wrap: break-word;
+        }
+
+        .button-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .section-label {
+            grid-column: span 2;
+            margin-top: 10px;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            color: #999;
+            letter-spacing: 1px;
+        }
+
+        button {
+            padding: 10px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: transform 0.1s, background 0.2s;
+        }
+
+        .btn-mul { background: var(--primary); color: white; }
+        .btn-div { background: var(--secondary); color: white; }
+
+        button:hover { opacity: 0.9; transform: translateY(-1px); }
+        button:active { transform: translateY(1px); }
+
+        .history {
+            margin-top: 20px;
+            max-height: 150px;
+            overflow-y: auto;
+            font-size: 0.85rem;
+            border-top: 1px solid #eee;
+            padding-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Place Value Lab</h2>
+    
+    <div class="input-group">
+        <label>Starting Number:</label>
+        <input type="number" id="numInput" value="1" step="any">
+    </div>
+
+    <div class="result-display" id="result">1</div>
+
+    <div class="button-grid">
+        <div class="section-label">Multiplication (x)</div>
+        <button class="btn-mul" onclick="calculate('mul', 10)">x10</button>
+        <button class="btn-mul" onclick="calculate('mul', 100)">x100</button>
+        <button class="btn-mul" onclick="calculate('mul', 1000)">x1000</button>
+        <button class="btn-mul" onclick="calculate('mul', 10000)">x10,000</button>
+        
+        <div class="section-label">Division (÷)</div>
+        <button class="btn-div" onclick="calculate('div', 10)">÷10</button>
+        <button class="btn-div" onclick="calculate('div', 100)">÷100</button>
+        
+        <div class="section-label">Decimal Multipliers</div>
+        <button class="btn-div" style="background:#8e44ad" onclick="calculate('mul', 0.1)">x0.1 (÷10)</button>
+        <button class="btn-div" style="background:#8e44ad" onclick="calculate('mul', 0.01)">x0.01 (÷100)</button>
+    </div>
+
+    <div class="history" id="history">
+        <strong>History:</strong>< sweep>
+    </div>
+</div>
+
+<script>
+    const input = document.getElementById('numInput');
+    const display = document.getElementById('result');
+    const historyBox = document.getElementById('history');
+
+    function calculate(type, value) {
+        let current = parseFloat(input.value) || 0;
+        let result;
+        let symbol = type === 'mul' ? '×' : '÷';
+
+        if (type === 'mul') {
+            result = current * value;
+        } else {
+            result = current / value;
+        }
+
+        // Fix floating point precision issues (e.g., 0.1 + 0.2)
+        result = parseFloat(result.toPrecision(12));
+
+        // Update UI
+        display.innerText = result;
+        input.value = result;
+
+        // Add to history
+        const entry = document.createElement('div');
+        entry.innerHTML = `${current} ${symbol} ${value} = <strong>${result}</strong>`;
+        historyBox.prepend(entry);
+    }
+</script>
+
+</body>
+</html>
